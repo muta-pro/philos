@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/09 16:24:29 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:32:40 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,12 @@ typedef struct info t_info;
 
 typedef struct ph
 {
-	char			*name;
-	int				*id;
-	int				died;
+	int				id;
 	int				times_ate;
-	long			last_time_ate;
+	long			last_meal_ms;
 	pthread_t		thread_id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*print_lock;
-	pthread_mutex_t	*plate_lock;
 	t_info			*data;
 
 }	t_ph;
@@ -41,12 +37,15 @@ typedef struct ph
 
 typedef struct info
 {
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long			start_time;
 	int				num_of_philos;
 	int				count_must_eat;
-	int				sim_run;
+	int				stop;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write_lock;
-	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	plate_lock;
 	t_ph			*philos;
 }	t_info;

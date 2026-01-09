@@ -6,18 +6,18 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/09 15:38:56 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/09 17:32:10 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
 
-void	print_disp(t_time *time, t_ph *id, t_ph *name, char *status)
+void	print_disp(t_info *time, t_ph id, char *status)
 {
-	printf("%d, %d, %s, %s.\n", time, id, name->name, print_status(status));
+	printf("%d, %d, %s.\n", time, id, print_status(status));
 }
 
-void	print_status(t_ph *philo, t_ph *state)
+void	print_status(t_ph *state)
 {
 	if (state->died == 1)
 		printf("died\n");
