@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/09 17:32:40 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 05:42:28 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <sys/time.h>
 
@@ -50,6 +51,11 @@ typedef struct info
 	t_ph			*philos;
 }	t_info;
 
-int	ft_atoi(const char *str);
+int		they_live(t_ph *philo);
+void	ft_usleep(long ms, t_ph *philo);
+size_t	get_useconds(void);
+void	print_display(t_ph *philo, char *status);
+int		ft_atoi(const char *str);
+void	err_input(void);
 
 #endif

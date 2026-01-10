@@ -6,30 +6,40 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/09 17:32:10 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 05:43:32 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
 
-void	print_disp(t_info *time, t_ph id, char *status)
+size_t	get_useconds(void)
 {
-	printf("%d, %d, %s.\n", time, id, print_status(status));
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000000 + time.tv_usec);
 }
 
-void	print_status(t_ph *state)
+void	ft_usleep(long ms, t_ph *philo)
 {
-	if (state->died == 1)
-		printf("died\n");
-	if (state->ate == 1)
-		printf("is eating\n");
-	if (state->sleep == 1)
-		printf("is sleeping\n");
-	if (state->think == 1)
-		printf("is thinking\n");
-	if (state->fork == 1)
-		printf("has taken a fork\n");
-} 
+	long	start_time;
+
+	start_time = get_useconds();
+	while (get_useconds() - start_time < ms)
+	{
+		if (!they_live(philo))
+			break ;
+		usleep(500);
+	}
+}
+
+void	print_display(t_ph *philo, char *status)
+{
+	long	cur_time_ms;
+
+	cur_time_ms = get_useconds() - philo->data->start_time;
+	printf("%zu, %d, %s.\n", cur_time_ms, philo->id, status);
+}
 
 int	ft_atoi(const char *str)
 {
