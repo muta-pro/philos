@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 05:42:28 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 07:47:10 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct info
 
 int		they_live(t_ph *philo);
 void	ft_usleep(long ms, t_ph *philo);
-size_t	get_useconds(void);
+long	get_useconds(void);
 void	print_display(t_ph *philo, char *status);
 int		ft_atoi(const char *str);
 void	err_input(void);

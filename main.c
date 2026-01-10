@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:41:50 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 05:55:30 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 07:40:19 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	they_live(t_ph *philo)
 	return (NULL);
 }
 
-int	main(int argc, char **argv[])
+int	main(int argc, char **argv)
 {
 	t_info	*data;
 	int		i;
@@ -95,6 +95,7 @@ int	main(int argc, char **argv[])
 		data->start_time = get_useconds();
 		pthread_create(&data->philos[i].thread_id,
 			NULL, they_live(data->philos), &data->philos[i]);
+		usleep (50);
 		i++;
 	}
 	check_life(&data);

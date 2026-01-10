@@ -6,13 +6,13 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 05:43:32 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 07:47:13 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
 
-size_t	get_useconds(void)
+long	get_useconds(void)
 {
 	struct timeval	time;
 
