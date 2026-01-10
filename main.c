@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:41:50 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 07:40:19 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 23:03:39 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,86 +19,75 @@ int	time_over(t_info *data)
 	cur_time_ms = get_useconds();
 	if ((cur_time_ms - data->philos->last_meal_ms) > data->time_to_die)
 	{
+		pthread_mutex_lock(&data->write_lock);
 		print_display(data->philos, "died");
+		pthread_mutex_unlock(&data->write_lock);
 		data->stop = 0;
 		return (0);
 	}
 	return (0);
 }
 
-void	thinking(t_ph *philo)
+int	destroy_mtx_f(t_info *data)
 {
-	print_display(philo, "thinking");
-}
+	int i;
 
-void	snoring(t_ph *philo)
-{
-	print_display(philo, "is sleeping");
-	ft_usleep(philo->data->time_to_sleep * 1000);
-}
-
-void	eating(t_ph *philo)
-{
-	pthread_mutex_lock(philo->left_fork);
-	print_display(philo, "taken a fork");
-	pthread_mutex_lock(philo->right_fork);
-	print_display(philo, "taken a fork");
-	print_display(philo, "is eating");
-	pthread_mutex_lock(&philo->data->plate_lock);
-	philo->last_meal_ms = get_useconds();
-	philo->times_ate++;
-	pthread_mutex_unlock(&philo->data->plate_lock);
-	ft_usleep(philo->data->time_to_eat);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	snoring(philo);
-	thinking(philo);
-}
-
-void	cleanup_table(int num)
-{
-	t_table	table;
-
-	free(table);
-}
-
-int	has_starved(t_ph *philo)
-{
-	
-	return (1);
-}
-
-int	they_live(t_ph *philo)
-{
-	if (philo->id % 2 == 0)
-		ft_usleep(500, philo);
-	while (1)
+	i = 0;
+	while (i < data->num_of_philos)
 	{
-		eating((t_ph *)arg);
-		snoring((t_ph *)arg);
-		thinking((t_ph *)arg);
+		pthread_mutex_destroy(&data->forks[i]);
+		i++;
 	}
-	return (NULL);
+	return (0);
+}
+
+void	cleanup_table(pthread_t *th, t_info *data, t_ph *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_of_philos)
+	{
+		pthread_join(th[i], NULL);
+		i++;
+	}
+	destroy_mtx_f(data);
+	free(data->forks);
+	free(th);
+	free(philo);
+}
+
+int	terminate_all(t_info *data)
+{
+	destroy_mtx_f(data);
+	cleanup_table(&data->philos->thread_id, data, data->philos);
+	return (0);
 }
 
 int	main(int argc, char **argv)
 {
-	t_info	*data;
+	t_info	data;
 	int		i;
 
 	memset(&data, 0, sizeof(data));
-	if (parse(&data) == 1)
+	if (parse(argc, argv, &data) == 1)
 		return (1);
+	if (init_mtx_f(& data) != 0)
+		return (1);
+	if (pthread_mutex_init(&data.write_lock, NULL) != 0)
+		return (err_mtx(), 1);
+	if (pthread_mutex_init(&data.plate_lock, NULL) != 0)
+		return (err_mtx(), 1);
+	data.start_time = get_useconds();
 	i = 0;
-	while (i < data->num_of_philos)
-	{
-		data->start_time = get_useconds();
-		pthread_create(&data->philos[i].thread_id,
-			NULL, they_live(data->philos), &data->philos[i]);
+	while (i < data.num_of_philos)
+	{	
+		pthread_create(&data.philos[i].thread_id,
+			NULL, loop_life_th, &data.philos[i]);
 		usleep (50);
 		i++;
 	}
-	check_life(&data);
-	terminate_all(&d);
+	loop_death_th(&data);
+	terminate_all(&data);
 	return (0);
 }

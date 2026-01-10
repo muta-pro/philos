@@ -6,19 +6,22 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 07:47:10 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/10 23:03:37 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEAD_H
 # define HEAD_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pthread.h>
-#include <sys/time.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
+# include <pthread.h>
+# include <sys/time.h>
+
+# define STOP_SIM 0
+# define RUN_SIM 1
 
 typedef struct info t_info;
 
@@ -51,11 +54,17 @@ typedef struct info
 	t_ph			*philos;
 }	t_info;
 
-int		they_live(t_ph *philo);
+void	*loop_life_th(void *arg);
+int		loop_death_th(t_info *data);
 void	ft_usleep(long ms, t_ph *philo);
 long	get_useconds(void);
 void	print_display(t_ph *philo, char *status);
+
+int		parse(int argc, char **argv, t_info *data);
+int		init_mtx_f(t_info *data);
 int		ft_atoi(const char *str);
 void	err_input(void);
+void	err_mem(void);
+void	err_mtx(void);
 
 #endif
