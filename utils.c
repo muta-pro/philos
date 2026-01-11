@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/12 00:27:31 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 00:55:50 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	print_display_rip(t_ph *philo)
 		return ;
 	}
 	philo->data->stop = STOP_SIM;
-	cur_time_ms = get_useconds();
+	cur_time_ms = get_useconds() - philo->data->start_time;
 	pthread_mutex_unlock(&philo->data->plate_lock);
 	printf("%ld %d died\n", cur_time_ms, philo->id);
 	pthread_mutex_unlock(&philo->data->write_lock);
