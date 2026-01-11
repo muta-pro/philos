@@ -6,66 +6,86 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 00:27:04 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:31:17 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 23:44:13 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
 
-void	uneven_fork(t_ph *philo)
+int stop_sim(t_info *data)
 {
-	pthread_mutex_lock(philo->left_fork);
-	print_display(philo, "has taken a fork");
-	pthread_mutex_lock(philo->right_fork);
-	print_display(philo, "has taken a fork");
+	int s;
+
+	pthread_mutex_lock(&data->plate_lock);
+	s = data->stop;
+	pthread_mutex_unlock(&data->plate_lock);
+	return (s == STOP_SIM);
 }
-void	even_fork(t_ph *philo)
+void	swap_f(int *x, int *y)
 {
-	pthread_mutex_lock(philo->right_fork);
-	print_display(philo, "has taken a fork");
-	pthread_mutex_lock(philo->left_fork);
-	print_display(philo, "has taken a fork");
+	int z;
+
+	z = *x;
+	*x = *y;
+	*y = z;	
+}
+
+int	take_forks(t_ph *philo)
+{
+	int	x;
+	int	y;
+
+	x = philo->left_f;
+	y = philo->right_f;
+	if (x > y)
+		swap_f(&x, &y);
+	while (!stop_sim(philo->data))
+	{
+		pthread_mutex_lock(&philo->data->forks[x].mtx);
+		pthread_mutex_lock(&philo->data->forks[y].mtx);
+		if (philo->data->forks[x].taken == 0 && philo->data->forks[y].taken == 0)
+		{
+			philo->data->forks[x].taken = 1;
+			philo->data->forks[y].taken = 1;
+			pthread_mutex_unlock(&philo->data->forks[y].mtx);
+			pthread_mutex_unlock(&philo->data->forks[x].mtx);
+			print_display(philo, "has taken a fork");
+			print_display(philo, "has taken a fork");
+			return (0);
+		}
+		pthread_mutex_unlock(&philo->data->forks[y].mtx);
+		pthread_mutex_unlock(&philo->data->forks[x].mtx);
+	}
+	return (1);
+}
+
+void	drop_forks(t_ph *philo)
+{
+	int	x;
+	int	y;
+
+	x = philo->left_f;
+	y = philo->right_f;
+	if (x > y)
+		swap_f(&x, &y);
+	pthread_mutex_lock(&philo->data->forks[x].mtx);
+	pthread_mutex_lock(&philo->data->forks[y].mtx);
+	philo->data->forks[x].taken = 0;
+	philo->data->forks[y].taken = 0;
+	pthread_mutex_unlock(&philo->data->forks[y].mtx);
+	pthread_mutex_unlock(&philo->data->forks[x].mtx);
 }
 
 void	*one_ph_died(t_ph *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
+	int	x;
+
+	x = philo->left_f;
+	pthread_mutex_lock(&philo->data->forks[x].mtx);
+	if (philo->data->forks[x].taken == 0)
+		philo->data->forks[x].taken = 1;
+	pthread_mutex_unlock(&philo->data->forks[x].mtx);
 	print_display(philo, "has taken a fork");
 	ft_usleep(philo->data->time_to_die, philo);
-	pthread_mutex_unlock(philo->left_fork);
 	return (NULL);
-}
-int	check_if_full(t_info *data, t_ph *philo)
-{
-	int hungry;
-
-	hungry = 0;
-	pthread_mutex_lock(&data->plate_lock);
-	if (data->count_must_eat != -1)
-		{
-			if (philo->times_ate < data->count_must_eat)
-				hungry = 1;
-		}
-	pthread_mutex_unlock(&data->plate_lock);
-	return (hungry);
-}
-
-int	check_death(t_info *data, t_ph *philo)
-{
-	long	curr_time_ms;
-
-	pthread_mutex_lock(&data->plate_lock);
-	if (data->stop == STOP_SIM)
-		return (pthread_mutex_unlock(&data->plate_lock), 0);
-	curr_time_ms = get_useconds();
-	if ((curr_time_ms - philo->last_meal_ms) >= data->time_to_die)
-	{
-		pthread_mutex_unlock(&data->plate_lock);
-		print_display(philo, "died");
-		pthread_mutex_lock(&data->plate_lock);
-		data->stop = STOP_SIM;
-		return (pthread_mutex_unlock(&data->plate_lock), 1);
-	}
-	pthread_mutex_unlock(&data->plate_lock);
-	return (0);
 }

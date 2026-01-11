@@ -6,27 +6,11 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:41:50 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:38:43 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 00:27:54 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
-
-int	time_over(t_info *data)
-{
-	long	cur_time_ms;
-
-	cur_time_ms = get_useconds();
-	if ((cur_time_ms - data->philos->last_meal_ms) > data->time_to_die)
-	{
-		pthread_mutex_lock(&data->write_lock);
-		print_display(data->philos, "died");
-		pthread_mutex_unlock(&data->write_lock);
-		data->stop = 0;
-		return (0);
-	}
-	return (0);
-}
 
 int	destroy_mtx_f(t_info *data)
 {
@@ -35,7 +19,7 @@ int	destroy_mtx_f(t_info *data)
 	i = 0;
 	while (i < data->num_of_philos)
 	{
-		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&data->forks[i].mtx);
 		i++;
 	}
 	return (0);
@@ -58,9 +42,21 @@ void	cleanup_table(t_info *data)
 	free(data->philos);
 }
 
-int	terminate_all(t_info *data)
+int init_mtx_f(t_info *data)
 {
-	cleanup_table(data);
+	int i;
+
+	i = 0;
+	while (i < data->num_of_philos)
+	{
+		if(pthread_mutex_init(&data->forks[i].mtx, NULL) != 0)
+		{
+			err_mtx();
+			return (1);
+		}
+		data->forks[i].taken = 0;
+		i++;
+	}
 	return (0);
 }
 
@@ -72,7 +68,7 @@ int	main(int argc, char **argv)
 	memset(&data, 0, sizeof(data));
 	if (parse(argc, argv, &data) == 1)
 		return (1);
-	if (init_mtx_f(& data) != 0)
+	if (init_mtx_f(&data) != 0)
 		return (1);
 	if (pthread_mutex_init(&data.write_lock, NULL) != 0)
 		return (err_mtx(), 1);
@@ -82,12 +78,13 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < data.num_of_philos)
 	{	
+		data.philos->last_meal_ms = data.start_time;
 		pthread_create(&data.philos[i].thread_id,
 			NULL, loop_life_th, &data.philos[i]);
 		usleep (50);
 		i++;
 	}
 	loop_death_th(&data);
-	terminate_all(&data);
+	cleanup_table(&data);
 	return (0);
 }

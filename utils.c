@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:20:55 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 00:27:31 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,31 +42,37 @@ void	print_display(t_ph *philo, char *status)
 {
 	long	cur_time_ms;
 
+	pthread_mutex_lock(&philo->data->write_lock);
 	pthread_mutex_lock(&philo->data->plate_lock);
 	if (philo->data->stop == STOP_SIM)
 	{
 		pthread_mutex_unlock(&philo->data->plate_lock);
+		pthread_mutex_unlock(&philo->data->write_lock);
 		return ;
 	}
-	pthread_mutex_unlock(&philo->data->plate_lock);
 	cur_time_ms = get_useconds() - philo->data->start_time;
-	pthread_mutex_lock(&philo->data->write_lock);
-	printf("%zu %d %s\n", cur_time_ms, philo->id, status);
+	pthread_mutex_unlock(&philo->data->plate_lock);
+	printf("%ld %d %s\n", cur_time_ms, philo->id, status);
 	pthread_mutex_unlock(&philo->data->write_lock);
 }
 
-int init_mtx_f(t_info *data)
+void	print_display_rip(t_ph *philo)
 {
-	int i;
+	long	cur_time_ms;
 
-	i = 0;
-	while (i < data->num_of_philos)
+	pthread_mutex_lock(&philo->data->write_lock);
+	pthread_mutex_lock(&philo->data->plate_lock);
+	if (philo->data->stop == STOP_SIM)
 	{
-		if(!pthread_mutex_init(&data->forks[i], NULL))
-			return (err_mtx(), 1);
-		i++;
+		pthread_mutex_unlock(&philo->data->plate_lock);
+		pthread_mutex_unlock(&philo->data->write_lock);
+		return ;
 	}
-	return (0);
+	philo->data->stop = STOP_SIM;
+	cur_time_ms = get_useconds();
+	pthread_mutex_unlock(&philo->data->plate_lock);
+	printf("%ld %d died\n", cur_time_ms, philo->id);
+	pthread_mutex_unlock(&philo->data->write_lock);
 }
 
 int	ft_atoi(const char *str)
@@ -78,6 +84,8 @@ int	ft_atoi(const char *str)
 	result = 0;
 	i = 0;
 	sign = 1;
+	if (!str)
+		return (-1);
 	while ((str[i] > 8 && str[i] < 14) || str[i] == 32)
 		i++;
 	if (str[i] == '+' || str[i] == '-')
@@ -87,6 +95,10 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	while (str[i] >= '0' && str[i] <= '9')
+	{
 		result = result * 10 + (str[i++] - '0');
+		if (result > 2147483647)
+			return (-1);
+	}
 	return (result * sign);
 }

@@ -4,7 +4,7 @@ NAME = philo
 
 CFLAGS = -Wall -Wextra -Werror -g3 -pthread
 
-SRC = main.c err.c parser.c philo_life.c utils.c philo_utils.c
+SRC = main.c err.c parser.c philo_life.c utils.c philo_utils.c checks.c
 
 HEAD = head.h
 

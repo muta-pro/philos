@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:51:37 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:40:29 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 23:42:23 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,16 @@ int loop_death_th(t_info *data)
 
 void	thinking(t_ph *philo)
 {
+	long	ms_think;
+
 	print_display(philo, "is thinking");
+	if (philo->data->num_of_philos % 2 == 1)
+	{
+		ms_think = (philo->data->time_to_eat * 2) - philo->data->time_to_sleep;
+		if (ms_think < 0)
+			ms_think = 0;
+		ft_usleep(ms_think, philo);
+	}
 }
 
 void	snoring(t_ph *philo)
@@ -53,29 +62,36 @@ void	snoring(t_ph *philo)
 
 void	eating(t_ph *philo)
 {
-	if (philo->id % 2 != 0)
-		uneven_fork(philo);
-	else
-		even_fork(philo);
-	print_display(philo, "is eating");
+	if (take_forks(philo) != 0)
+		return ;
 	pthread_mutex_lock(&philo->data->plate_lock);
 	philo->last_meal_ms = get_useconds();
 	philo->times_ate++;
 	pthread_mutex_unlock(&philo->data->plate_lock);
+	print_display(philo, "is eating");
 	ft_usleep(philo->data->time_to_eat, philo);
-	pthread_mutex_unlock(philo->right_fork);
-	pthread_mutex_unlock(philo->left_fork);
+	drop_forks(philo);
 }
 
 void	*loop_life_th(void *arg)
 {
 	t_ph	*philo;
+	long	delay;
 
 	philo = (t_ph *)arg;
 	if (philo->data->num_of_philos == 1)
-		return (one_ph_died(philo), NULL);
+	{
+		one_ph_died(philo);
+		return (NULL);
+	}
 	if (philo->id % 2 == 0)
-		ft_usleep(500, philo);
+	{
+		delay = philo->data->time_to_eat / 2;
+		if (delay > philo->data->time_to_die / 2)
+			delay = philo->data->time_to_die / 2;
+		if (delay > 0)
+		ft_usleep(delay, philo);
+	}
 	while (1)
 	{
 		pthread_mutex_lock(&philo->data->plate_lock);
@@ -84,6 +100,7 @@ void	*loop_life_th(void *arg)
 			pthread_mutex_unlock(&philo->data->plate_lock);
 			break ;
 		}
+		pthread_mutex_unlock(&philo->data->plate_lock);
 		eating(philo);
 		snoring(philo);
 		thinking(philo);
