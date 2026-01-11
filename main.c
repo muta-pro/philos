@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:41:50 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:20:58 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 02:38:43 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,14 @@ void	cleanup_table(t_info *data)
 		i++;
 	}
 	destroy_mtx_f(data);
+	pthread_mutex_destroy(&data->write_lock);
+	pthread_mutex_destroy(&data->plate_lock);
 	free(data->forks);
 	free(data->philos);
 }
 
 int	terminate_all(t_info *data)
 {
-	destroy_mtx_f(data);
 	cleanup_table(data);
 	return (0);
 }

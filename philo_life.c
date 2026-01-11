@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:51:37 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:21:52 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 02:40:29 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,15 @@ int loop_death_th(t_info *data)
 	while (1)
 	{
 		i = -1;
-		are_full = -1;
+		are_full = 1;
 		while (++i < data->num_of_philos)
 		{
-			if (check_death(data, data->philos))
+			if (check_death(data, &data->philos[i]))
 				return (0);
-			if (check_if_full(data, data->philos))
+			if (check_if_full(data, &data->philos[i]))
 				are_full = 0;
 		}
-		if (data->count_must_eat != 1 && are_full)
+		if (data->count_must_eat != -1 && are_full)
 		{
 			pthread_mutex_lock(&data->plate_lock);
 			data->stop = STOP_SIM;
@@ -73,7 +73,7 @@ void	*loop_life_th(void *arg)
 
 	philo = (t_ph *)arg;
 	if (philo->data->num_of_philos == 1)
-		return (one_ph_died(philo));
+		return (one_ph_died(philo), NULL);
 	if (philo->id % 2 == 0)
 		ft_usleep(500, philo);
 	while (1)

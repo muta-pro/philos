@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 00:27:04 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 02:14:01 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 02:31:17 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	even_fork(t_ph *philo)
 void	*one_ph_died(t_ph *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
-	print_display(philo, "has taken a fork.");
+	print_display(philo, "has taken a fork");
 	ft_usleep(philo->data->time_to_die, philo);
 	pthread_mutex_unlock(philo->left_fork);
 	return (NULL);
@@ -56,15 +56,15 @@ int	check_death(t_info *data, t_ph *philo)
 
 	pthread_mutex_lock(&data->plate_lock);
 	if (data->stop == STOP_SIM)
-		return (pthread_mutex_unlock(&data->plate_lock), 1);
+		return (pthread_mutex_unlock(&data->plate_lock), 0);
 	curr_time_ms = get_useconds();
 	if ((curr_time_ms - philo->last_meal_ms) >= data->time_to_die)
 	{
 		pthread_mutex_unlock(&data->plate_lock);
-		print_display(philo, "died.\n");
+		print_display(philo, "died");
 		pthread_mutex_lock(&data->plate_lock);
 		data->stop = STOP_SIM;
-		return (pthread_mutex_unlock(&data->plate_lock));
+		return (pthread_mutex_unlock(&data->plate_lock), 1);
 	}
 	pthread_mutex_unlock(&data->plate_lock);
 	return (0);
