@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 23:03:37 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 02:16:41 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ typedef struct ph
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	t_info			*data;
-
 }	t_ph;
 
 
@@ -59,8 +58,13 @@ int		loop_death_th(t_info *data);
 void	ft_usleep(long ms, t_ph *philo);
 long	get_useconds(void);
 void	print_display(t_ph *philo, char *status);
+void	*one_ph_died(t_ph *philo);
+int		check_death(t_info *data, t_ph *philo);
+int		check_if_full(t_info *data, t_ph *philo);
 
 int		parse(int argc, char **argv, t_info *data);
+void	even_fork(t_ph *philo);
+void	uneven_fork(t_ph *philo);
 int		init_mtx_f(t_info *data);
 int		ft_atoi(const char *str);
 void	err_input(void);

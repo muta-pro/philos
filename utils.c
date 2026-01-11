@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 23:50:14 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 02:20:55 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,16 @@ void	print_display(t_ph *philo, char *status)
 {
 	long	cur_time_ms;
 
+	pthread_mutex_lock(&philo->data->plate_lock);
+	if (philo->data->stop == STOP_SIM)
+	{
+		pthread_mutex_unlock(&philo->data->plate_lock);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data->plate_lock);
 	cur_time_ms = get_useconds() - philo->data->start_time;
 	pthread_mutex_lock(&philo->data->write_lock);
-	printf("%zu, %d, %s.\n", cur_time_ms, philo->id, status);
+	printf("%zu %d %s\n", cur_time_ms, philo->id, status);
 	pthread_mutex_unlock(&philo->data->write_lock);
 }
 

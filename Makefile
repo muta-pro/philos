@@ -2,30 +2,26 @@ CC = cc
 
 NAME = philo
 
-CFLAGS = -Wall -Wextra -Werror -g3
+CFLAGS = -Wall -Wextra -Werror -g3 -pthread
 
-SRC = main.c err.c parser.c philo_life.c utils.c
+SRC = main.c err.c parser.c philo_life.c utils.c philo_utils.c
 
 HEAD = head.h
 
-OBJ = $(SRC:%.c=%.o)
+OBJ = $(SRC:.c=.o)
 
 all : $(NAME)
-
-$(OBJ):
-	@mkdir -p $(OBJ)
-
-$(NAME) : $ (OBJ)
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-
-%.o: %.c
-	@$(CC) $(CFLAGS) $(HEAD) -c $< -o $@
-
+#link rule
+$(NAME) : $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+#comp rule
+%.o: %.c $(HEAD)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -r ${OBJ}
+	rm -f $(OBJ)
 fclean: clean
-	rm -f ${NAME}
+	rm -f $(NAME)
 re: fclean all
 
 .PHONY: all clean fclean re

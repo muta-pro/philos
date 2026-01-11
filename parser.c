@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/10 00:08:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/10 23:56:10 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/11 00:14:06 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	save_time(int argc, char **argv, t_info *data)
 	if (argc < 5 || argc > 6)
 	{
 		printf("invalid args\n");
-		return (0);
+		return (1);
 	}
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
@@ -67,6 +67,8 @@ int	save_time(int argc, char **argv, t_info *data)
 
 int	parse(int argc, char **argv, t_info *data)
 {
+	if (argc == 1)
+		return (err_input(), 1);
 	data->num_of_philos = ft_atoi(argv[1]);
 	if (data->num_of_philos < 1)
 		return (err_input(), 1);
