@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:41:50 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/12 00:27:54 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 01:05:06 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	main(int argc, char **argv)
 	i = 0;
 	while (i < data.num_of_philos)
 	{	
-		data.philos->last_meal_ms = data.start_time;
+		data.philos[i].last_meal_ms = data.start_time;
 		pthread_create(&data.philos[i].thread_id,
 			NULL, loop_life_th, &data.philos[i]);
 		usleep (50);
