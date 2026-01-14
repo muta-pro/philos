@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 23:43:32 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 23:44:20 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 16:20:22 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 int	check_if_full(t_info *data, t_ph *philo)
 {
-	int hungry;
+	int	hungry;
 
 	hungry = 0;
 	pthread_mutex_lock(&data->plate_lock);
 	if (data->count_must_eat != -1)
-		{
-			if (philo->times_ate < data->count_must_eat)
-				hungry = 1;
-		}
+	{
+		if (philo->times_ate < data->count_must_eat)
+			hungry = 1;
+	}
 	pthread_mutex_unlock(&data->plate_lock);
 	return (hungry);
 }

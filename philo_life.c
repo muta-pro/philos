@@ -6,16 +6,16 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:51:37 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/11 23:42:23 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/14 11:15:45 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "head.h"
 
-int loop_death_th(t_info *data)
+int	loop_death_th(t_info *data)
 {
 	int	i;
-	int are_full;
+	int	are_full;
 
 	while (1)
 	{
@@ -50,6 +50,8 @@ void	thinking(t_ph *philo)
 		ms_think = (philo->data->time_to_eat * 2) - philo->data->time_to_sleep;
 		if (ms_think < 0)
 			ms_think = 0;
+		if (ms_think > philo->data->time_to_eat)
+			ms_think = philo->data->time_to_eat;
 		ft_usleep(ms_think, philo);
 	}
 }
@@ -62,14 +64,16 @@ void	snoring(t_ph *philo)
 
 void	eating(t_ph *philo)
 {
-	if (take_forks(philo) != 0)
+	if (take_forks(philo, philo->data) != 0)
 		return ;
 	pthread_mutex_lock(&philo->data->plate_lock);
 	philo->last_meal_ms = get_useconds();
-	philo->times_ate++;
 	pthread_mutex_unlock(&philo->data->plate_lock);
 	print_display(philo, "is eating");
 	ft_usleep(philo->data->time_to_eat, philo);
+	pthread_mutex_lock(&philo->data->plate_lock);
+	philo->times_ate++;
+	pthread_mutex_unlock(&philo->data->plate_lock);
 	drop_forks(philo);
 }
 
@@ -90,17 +94,10 @@ void	*loop_life_th(void *arg)
 		if (delay > philo->data->time_to_die / 2)
 			delay = philo->data->time_to_die / 2;
 		if (delay > 0)
-		ft_usleep(delay, philo);
+			ft_usleep(delay, philo);
 	}
-	while (1)
+	while (!stop_sim(philo->data))
 	{
-		pthread_mutex_lock(&philo->data->plate_lock);
-		if (philo->data->stop == STOP_SIM)
-		{
-			pthread_mutex_unlock(&philo->data->plate_lock);
-			break ;
-		}
-		pthread_mutex_unlock(&philo->data->plate_lock);
 		eating(philo);
 		snoring(philo);
 		thinking(philo);

@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 13:17:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/12 00:55:50 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 17:26:20 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ void	print_display_rip(t_ph *philo)
 int	ft_atoi(const char *str)
 {
 	long long	result;
-	int	i;
-	int	sign;
+	int			i;
+	int			sign;
 
 	result = 0;
 	i = 0;

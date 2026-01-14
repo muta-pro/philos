@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 20:50:12 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/12 00:28:14 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/14 11:31:35 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # define STOP_SIM 0
 # define RUN_SIM 1
 
-typedef struct s_info t_info;
+typedef struct s_info	t_info;
 
 typedef struct s_ph
 {
@@ -55,6 +55,10 @@ typedef struct s_info
 	pthread_mutex_t	write_lock;
 	pthread_mutex_t	plate_lock;
 	t_ph			*philos;
+	int	 			f_init_count;
+	int				th_init_count;
+	int				wr_lock_count;
+	int				pl_lock_count;
 }	t_info;
 
 void	*loop_life_th(void *arg);
@@ -68,9 +72,10 @@ int		check_death(t_info *data, t_ph *philo);
 int		check_if_full(t_info *data, t_ph *philo);
 
 int		parse(int argc, char **argv, t_info *data);
-int		take_forks(t_ph *philo);
+int		take_forks(t_ph *philo, t_info *data);
 void	drop_forks(t_ph *philo);
 void	swap_f(int *x, int *y);
+int		stop_sim(t_info *data);
 int		ft_atoi(const char *str);
 void	err_input(void);
 void	err_mem(void);

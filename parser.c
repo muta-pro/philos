@@ -6,7 +6,7 @@
 /*   By: imutavdz <imutavdz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/10 00:08:38 by imutavdz          #+#    #+#             */
-/*   Updated: 2026/01/12 00:52:23 by imutavdz         ###   ########.fr       */
+/*   Updated: 2026/01/12 16:21:01 by imutavdz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ int	alloc_philos(t_info *data)
 	return (0);
 }
 
-int is_num(char *argv)
+int	is_num(char *argv)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	if (!argv  || !argv[i])
+	if (!argv || !argv[i])
 		return (1);
 	if (argv[i] == '+')
 		i++;
@@ -73,7 +73,7 @@ int	save_time(int argc, char **argv, t_info *data)
 		return (1);
 	}
 	if (is_num(argv[1]) || is_num(argv[2]) || is_num(argv[3]) || is_num(argv[4])
-		||  (argc == 6 && is_num(argv[5])))
+		|| (argc == 6 && is_num(argv[5])))
 		return (err_input(), 1);
 	data->num_of_philos = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -93,9 +93,9 @@ int	parse(int argc, char **argv, t_info *data)
 {
 	if (argc == 1)
 		return (err_input(), 1);
-	if(save_time(argc, argv, data))
+	if (save_time(argc, argv, data))
 		return (1);
-	if(alloc_philos(data))
+	if (alloc_philos(data))
 		return (1);
 	return (0);
 }
